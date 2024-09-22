@@ -1,0 +1,13 @@
+body {
+    background-color: #e0f7fa;
+}
+h1, h2 {
+    color: #004d40;
+}
+.table-dark {
+    background-color: #00796b;
+    color: white;
+}
+.btn-primary {
+    background-color: #004d40;
+}
