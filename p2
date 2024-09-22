@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Imágenes Personalizada</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #eef2f3;
+        }
+        .gallery-container {
+            margin-top: 50px;
+        }
+        .gallery-card {
+            margin-bottom: 20px;
+        }
+        .gallery-image {
+            height: 200px;
+            object-fit: cover;
+        }
+        .image-details {
+            color: #666;
+        }
+        .upload-form {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container gallery-container">
+        <h1 class="text-center text-success">Cargar y Visualizar Imágenes</h1>
+
+        <section class="upload-form">
+            <h4>Subir Imágenes</h4>
+            <form id="formUploadImages" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="imageInput" class="form-label">Selecciona Imágenes</label>
+                    <input type="file" class="form-control" id="imageInput" accept="image/*" multiple required>
+                </div>
+                <div class="mb-3">
+                    <label for="imageDescription" class="form-label">Descripción</label>
+                    <textarea class="form-control" id="imageDescription" rows="2" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Subir a la Galería</button>
+            </form>
+        </section>
+        <div class="row" id="imageGallery">
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#formUploadImages').on('submit', function(event) {
+                event.preventDefault();
+
+                const selectedFiles = $('#imageInput')[0].files;
+                const imageDescription = $('#imageDescription').val();
+
+                if (selectedFiles.length === 0) {
+                    alert("Selecciona al menos una imagen.");
+                    return;
+                }
+
+                Array.from(selectedFiles).forEach(function(file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        mostrarImagenEnGaleria(e.target.result, imageDescription);
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                limpiarFormulario();
+            });
+        });
+
+        function mostrarImagenEnGaleria(imagenURL, descripcion) {
+            const fechaActual = obtenerFechaHoraActual();
+
+            const imageCardHTML = `
+                <div class="col-lg-4 col-md-6 gallery-card">
+                    <div class="card">
+                        <img src="${imagenURL}" class="card-img-top gallery-image" alt="Imagen Cargada">
+                        <div class="card-body">
+                            <h5 class="card-title">Descripción</h5>
+                            <p class="card-text">${descripcion}</p>
+                            <p class="image-details">Cargado el: ${fechaActual}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('#imageGallery').append(imageCardHTML);
+        }
+
+        function obtenerFechaHoraActual() {
+            const fecha = new Date();
+            const dia = String(fecha.getDate()).padStart(2, '0');
+            const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+            const anio = fecha.getFullYear();
+            const hora = String(fecha.getHours()).padStart(2, '0');
+            const minutos = String(fecha.getMinutes()).padStart(2, '0');
+            const segundos = String(fecha.getSeconds()).padStart(2, '0');
+            
+            return `${dia}/${mes}/${anio} ${hora}:${minutos}:${segundos}`;
+        }
+
+        function limpiarFormulario() {
+            $('#formUploadImages')[0].reset();
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
